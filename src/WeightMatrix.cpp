@@ -10,6 +10,16 @@ WeightMatrix::WeightMatrix(const int& width, const int& height): width(width), h
     }
 }
 
+WeightMatrix::WeightMatrix(const std::vector<double> input): width(1), height(input.size()) 
+{
+    this->vector = std::vector<double>(input);
+    this->vector.push_back(1);
+}
+
+std::vector<double> WeightMatrix::getVector() const {
+    return vector;
+}
+
 double WeightMatrix::get(const int& x, const int& y) const {
     return this->vector[y * this->width + x];
 }
@@ -44,29 +54,20 @@ WeightMatrix WeightMatrix::dot(const WeightMatrix& n) const {
     return m;
 }
 
-WeightMatrix WeightMatrix::activate(const std::function<double (double)>& activation) const {
-    WeightMatrix m(this->width, this->height);
-
-    for (size_t i = 0; i < vector.size(); ++i) {
-        m.vector[i] = activation(vector[i]);
-    }
-
-    return m;
+void WeightMatrix::activate(const std::function<double (double)>& activation) const {
+    std::for_each(vector.begin(), vector.end(), activation);
 }
 
-WeightMatrix WeightMatrix::mutate(const double& rate) {
-    WeightMatrix m(this->width, this->height);
-
-    for (size_t i = 0; i < vector.size(); ++i) {
-        double r = randomizer.pick(0, 1);
+void WeightMatrix::mutate(const double& rate) {
+    std::for_each(vector.begin(), vector.end(), [this, rate](double &n) {
+        double r = this->randomizer.pick(0, 1);
         if (r < rate) {
-            m.vector[i] += this->randomizer.pickNorm(5.0, 2.0);
-            m.vector[i] = std::min(m.vector[i], 1.0);
-            m.vector[i] = std::max(m.vector[i], -1.0);
+            n += this->randomizer.pick(-1, 1);
+            n = std::min(n, 1.0);
+            n = std::max(n, -1.0);
         }
-    }
 
-    return m;
+    });
 }
 
 WeightMatrix WeightMatrix::crossover(const WeightMatrix& n) {
@@ -85,6 +86,14 @@ WeightMatrix WeightMatrix::crossover(const WeightMatrix& n) {
     m.vector.insert(m.vector.end(), std::make_move_iterator(right.begin()), std::make_move_iterator(right.end()));
 
     return m;
+}
+
+WeightMatrix& WeightMatrix::operator=(const WeightMatrix& m) {
+    width = m.width;
+    height = m.height;
+    vector = std::vector<double>(m.vector);
+
+    return *this;
 }
 
 WeightMatrix::~WeightMatrix() {}
