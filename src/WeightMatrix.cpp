@@ -10,7 +10,7 @@ WeightMatrix::WeightMatrix(const int& width, const int& height): width(width), h
     }
 }
 
-WeightMatrix::WeightMatrix(const std::vector<double> input): width(1), height(input.size()) 
+WeightMatrix::WeightMatrix(const std::vector<double> input): width(1), height(input.size() + 1) 
 {
     this->vector = std::vector<double>(input);
     this->vector.push_back(1);
@@ -30,11 +30,13 @@ void WeightMatrix::set(const int& x, const int& y, const double& value) {
 }
 
 WeightMatrix WeightMatrix::dot(const WeightMatrix& n) const {
-    WeightMatrix m(this->height, n.width);
 
-    if (this->width != n.height) {
+    if (width != n.height) {
         throw "Matrix's dimension don't match.";
     }
+
+    WeightMatrix m(n.width, this->height);
+
 
     for (int y = 0; y < this->height; y++)
     {
@@ -54,8 +56,8 @@ WeightMatrix WeightMatrix::dot(const WeightMatrix& n) const {
     return m;
 }
 
-void WeightMatrix::activate(const std::function<double (double)>& activation) const {
-    std::for_each(vector.begin(), vector.end(), activation);
+void WeightMatrix::activate(const std::function<double (double)>& activation) {
+    std::transform(vector.begin(), vector.end(), vector.begin(), activation);
 }
 
 void WeightMatrix::mutate(const double& rate) {

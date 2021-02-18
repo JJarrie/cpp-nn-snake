@@ -9,6 +9,7 @@ class Randomizer {
     public:
         Randomizer();
         double pick(double a, double b);
+        int pickInt(int a, int b);
         double pickNorm(double a, double b);
 };
 

@@ -6,7 +6,7 @@ NeuralNetwork::NeuralNetwork(const std::vector<int>& sizing) {
     std::vector<int>::const_iterator it;
 
     for (it = sizing.begin(); it != sizing.end() - 1; ++it) {
-        this->weights.push_back(WeightMatrix(*(it + 1) + 1, *it));
+        this->weights.push_back(WeightMatrix(*it + 1, *(it + 1)));
     }
 }
 
@@ -38,20 +38,16 @@ NeuralNetwork NeuralNetwork::crossover(const NeuralNetwork& partner) const {
 std::vector<double> NeuralNetwork::output(const std::vector<double>& input) const {
     WeightMatrix m = WeightMatrix(input);
 
-    std::cout << m << std::endl;
-
     for (size_t i = 0; i < this->weights.size() - 1; ++i) {
-        std::cout << weights[i] << std::endl;
         m = this->weights[i] * m;
-        std::cout << m << std::endl;
         m.activate(relu);
-        std::cout << m << std::endl;
+        m = WeightMatrix(m.getVector());
     }
 
-    m = *(weights.end()) * m;
-    std::cout << m << std::endl;
+    WeightMatrix x = *(weights.end() - 1);
+
+    m = x * m;
     m.activate(relu);
-    std::cout << m << std::endl;
 
     return m.getVector();
 }

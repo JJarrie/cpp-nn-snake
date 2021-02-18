@@ -21,7 +21,7 @@ class WeightMatrix {
         double get(const int& x, const int& y) const;
         void set(const int& x, const int& y, const double& value);
         WeightMatrix dot(const WeightMatrix& n) const;
-        void activate(const std::function<double (double)>& activation) const;
+        void activate(const std::function<double (double)>& activation);
         void mutate(const double& rate);
         WeightMatrix crossover(const WeightMatrix& n);
         WeightMatrix& operator=(const WeightMatrix& m);
