@@ -9,20 +9,26 @@
 #include "Point.hpp"
 #include "NeuralNetwork.hpp"
 #include "Vector.hpp"
+#include "Direction.hpp"
 
 class Snake {
     private:
+        int score;
+        int lifetime;
+        int timeleft;
         Vector boardSize;
         NeuralNetwork neuralNetwork;
         std::vector<Point> snake;
         std::vector<SquareValue> grid;
-        int score;
-        Randomizer randomizer;
         Point foodPosition;
+        Direction direction;
+
+        Vector getDirectionVector() const;
+        void gainTimeleft();
+        void generateFood();
 
     public:
         Snake(const Vector& boardSize, const NeuralNetwork& neuralNetwork);
-        void generateFood();
         bool isFinish() const;
         void nextFrame();
 };

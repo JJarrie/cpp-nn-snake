@@ -10,7 +10,6 @@
 
 class WeightMatrix {
     private:
-        Randomizer randomizer;
         std::vector<double> vector;
 		int width;
 		int height;

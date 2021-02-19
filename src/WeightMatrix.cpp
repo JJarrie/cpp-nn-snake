@@ -2,11 +2,10 @@
 
 WeightMatrix::WeightMatrix(const int& width, const int& height): width(width), height(height)
 {
-    this->randomizer = Randomizer();
     this->vector = std::vector<double>(width * height);
     
     for(std::vector<double>::iterator it = this->vector.begin(); it != this->vector.end(); ++it) {
-        *(it) = this->randomizer.pick(-1, 1);
+        *(it) = Randomizer::get().pick(-1, 1);
     }
 }
 
@@ -62,9 +61,9 @@ void WeightMatrix::activate(const std::function<double (double)>& activation) {
 
 void WeightMatrix::mutate(const double& rate) {
     std::for_each(vector.begin(), vector.end(), [this, rate](double &n) {
-        double r = this->randomizer.pick(0, 1);
+        double r = Randomizer::get().pick(0, 1);
         if (r < rate) {
-            n += this->randomizer.pick(-1, 1);
+            n += Randomizer::get().pick(-1, 1);
             n = std::min(n, 1.0);
             n = std::max(n, -1.0);
         }
@@ -74,7 +73,7 @@ void WeightMatrix::mutate(const double& rate) {
 
 WeightMatrix WeightMatrix::crossover(const WeightMatrix& n) {
     WeightMatrix m(this->width, this->height);
-    size_t p = randomizer.pick(0, this->vector.size());
+    size_t p = Randomizer::get().pick(0, this->vector.size());
 
     std::vector<double>::const_iterator leftPIter(vector.cbegin());
     std::advance(leftPIter, p);
