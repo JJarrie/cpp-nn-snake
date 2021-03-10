@@ -14,7 +14,7 @@ struct Point {
         return x == p.x && y == p.y;
     }
 
-    inline Point operator+(const Vector& v) {
+    inline Point operator+(const Vector& v) const {
         return Point(x + v.x, y + v.y);
     }
 };

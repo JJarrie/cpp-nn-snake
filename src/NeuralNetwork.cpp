@@ -22,7 +22,7 @@ void NeuralNetwork::mutate(const double& rate) {
 }
 
 NeuralNetwork NeuralNetwork::crossover(const NeuralNetwork& partner) const {
-    NeuralNetwork nn = *this;
+    NeuralNetwork nn(*this);
     std::vector<WeightMatrix> crossed;
 
     for (size_t i = 0; i < nn.weights.size(); ++i) {

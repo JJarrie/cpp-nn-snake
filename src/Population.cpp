@@ -41,18 +41,80 @@ bool Population::isGenerationFinish() const
 
 void Population::nextCycle() 
 {
+    std::vector<Snake>::iterator it = snakes.begin();
 
+    for (it; it != snakes.end(); ++it) {
+        (*it).nextFrame();
+    }
+
+    bestSnake->nextFrame();
 }
 
 void Population::nextGeneration() 
 {
+    std::vector<Snake> nextGeneration;
 
+    electBestSnake();
+    calculateFitnessSum();
+
+    std::vector<Snake>::iterator it = snakes.begin();
+
+    for (it; it != snakes.end(); ++it) {
+        Snake parent = pickParent();
+        Snake partner = pickParent();
+        Snake children = parent.crossover(partner);
+        children.mutate(mutationRate);
+        nextGeneration.push_back(children);
+    }
+
+    snakes = nextGeneration;
+    generation++;
 }
 
 void Population::electBestSnake() {
+    double maxFitness = 0.0;
 
+    std::vector<Snake>::iterator it = snakes.begin();
+    std::vector<Snake>::iterator generationBestSnake;
+
+    for (it; it != snakes.end(); ++it) {
+        double snakeFitness = (*it).fitness();
+        if (snakeFitness > maxFitness) {
+            maxFitness = snakeFitness;
+            generationBestSnake = it;
+        }
+    }
+
+    if (maxFitness > bestFitness) {
+        bestGeneration = generation;
+        bestFitness = maxFitness;
+        bestScore = (*bestSnake).getScore();
+        bestSnake = &(*generationBestSnake);
+    }
 }
 
 Snake Population::pickParent() const {
-    return snakes[0];
+    double p = Randomizer::get().pick(0, fitnessSum);
+    double sum = 0.0;
+
+    std::vector<Snake>::const_iterator it = snakes.cbegin();
+
+    for (it; it != snakes.cend(); ++it) {
+        sum += (*it).fitness();
+
+        if (sum > p) {
+            return *(it);
+        }
+    }
+
+    return snakes.front();
+}
+
+void Population::calculateFitnessSum() {
+    fitnessSum = 0.0;
+    std::vector<Snake>::const_iterator it = snakes.cbegin();
+
+    for (it; it != snakes.cend(); ++it) {
+        fitnessSum += (*it).fitness();
+    }
 }

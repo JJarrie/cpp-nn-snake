@@ -19,6 +19,7 @@ class Population {
 
         void electBestSnake();
         Snake pickParent() const;
+        void calculateFitnessSum();
 
     public:
         Population(
