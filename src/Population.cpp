@@ -77,7 +77,7 @@ void Population::electBestSnake() {
     std::vector<Snake>::iterator it = snakes.begin();
     std::vector<Snake>::iterator generationBestSnake;
 
-    for (it; it != snakes.end(); ++it) {
+    for (; it != snakes.end(); ++it) {
         double snakeFitness = (*it).fitness();
         if (snakeFitness > maxFitness) {
             maxFitness = snakeFitness;
@@ -99,7 +99,7 @@ Snake Population::pickParent() const {
 
     std::vector<Snake>::const_iterator it = snakes.cbegin();
 
-    for (it; it != snakes.cend(); ++it) {
+    for (; it != snakes.cend(); ++it) {
         sum += (*it).fitness();
 
         if (sum > p) {

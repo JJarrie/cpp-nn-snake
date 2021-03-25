@@ -5,6 +5,8 @@
 #include "imgui.h"
 #include "backends/imgui_impl_allegro5.h"
 
+ALLEGRO_COLOR ImVec4ToAlColor(ImVec4 v);
+
 int main(int argc, char** argv) {
 
 	al_init();
@@ -31,7 +33,8 @@ int main(int argc, char** argv) {
 	bool show_demo_window = true;
 	bool show_another_window = false;
 
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	ImVec4 bg_color = ImVec4(0.0f, 0.0f, 0.0f, 1.00f);
+	ImVec4 food_color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
 
 	bool running = true;
 	while (running) {
@@ -69,7 +72,8 @@ int main(int argc, char** argv) {
 			ImGui::Checkbox("Another Window", &show_another_window);
 
 			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-			ImGui::ColorEdit3("clear color", (float*) &clear_color);
+			ImGui::ColorEdit3("Background color", (float*) &bg_color);
+			ImGui::ColorEdit3("Food color", (float*) &food_color);
 
 			if (ImGui::Button("Button")) {
 				counter++;
@@ -78,12 +82,27 @@ int main(int argc, char** argv) {
 			ImGui::SameLine();
 			ImGui::Text("counter = %d", counter);
 
-			ImGui::Text("Application average %.3.f ms/frame (%.1f FPS", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 			ImGui::End();
 		}
 
+		if (show_another_window) {
+			ImGui::Begin("Another window", &show_another_window);
+			ImGui::Text("Hello from another window!");
+			if (ImGui::Button("Close me")) {
+				show_another_window = false;
+			}
+			ImGui::End();
+		}
+
+
 		ImGui::Render();
-		al_clear_to_color(al_map_rgba_f(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w));
+
+		{
+			al_clear_to_color(ImVec4ToAlColor(bg_color));
+			al_draw_filled_rectangle(100.0f, 100.0f, 200.0f, 200.0f, ImVec4ToAlColor(food_color));
+		}
+
 		ImGui_ImplAllegro5_RenderDrawData(ImGui::GetDrawData());
 		al_flip_display();
 	}
@@ -94,4 +113,8 @@ int main(int argc, char** argv) {
 	al_destroy_display(display);
 
 	return EXIT_SUCCESS;
+}
+
+ALLEGRO_COLOR ImVec4ToAlColor(ImVec4 v) {
+	return al_map_rgba_f(v.x * v.w, v.y * v.w, v.z * v.w, v.w);
 }

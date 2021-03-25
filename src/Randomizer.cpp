@@ -6,6 +6,7 @@ Randomizer Randomizer::r;
 
 double Randomizer::pick(double a, double b) {
     std::uniform_real_distribution<double> dis(a, b);
+
     return dis(gen);
 }
 
